@@ -1,0 +1,23 @@
+{
+  "name": "express",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "^1.14.1",
+    "clj-fuzzy": "^0.3.1",
+    "express": "^4.13.3",
+    "http": "^0.0.0",
+    "plex-api": "^3.2.0",
+    "querystring": "^0.2.0",
+    "request": "^2.65.0",
+    "telnet-client": "^0.2.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

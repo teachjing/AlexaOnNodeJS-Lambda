@@ -1,0 +1,25 @@
+
+module.exports = {
+	"fox" : "300",
+	"cbs" : "301",
+	"nbc" : "302",
+	"pbs" : "303",
+	"abc" : "304",
+	"cw" : "305",
+	"fox news channel" : "310",
+	"cnbc" : "311",
+	"tnt" : "314",
+	"animal planet" : "318",
+	"tbs" : "319",
+    "espn": "333",
+    "espn 2" : "334",
+    "espn2" : "334",
+    "fox sports" : "335",
+    "amc" : "339",
+    "food network" : "339",
+    "food channel" : "339",
+    "e entertainment" : "344",
+    "golf" : "418",
+    "golf channel" : "418",
+    
+};

@@ -1,0 +1,84 @@
+{
+  "intents": [
+    { 
+      "intent": "VideoInputIntent",
+      "slots": [
+        {
+          "name": "inputnumber",
+          "type": "inputnumber"
+        }
+      ]
+    },
+    { 
+      "intent": "newEpisodeIntent",
+      "slots": [
+        {
+          "name": "titlename",
+          "type": "titlename"
+        }
+      ]
+    },
+    { 
+      "intent": "searchMovieIntent",
+      "slots": [
+        {
+          "name": "titlename",
+          "type": "titlename"
+        }
+      ]
+    },
+    { 
+      "intent": "recentlyAddedIntent",
+      "slots": [
+        {
+          "name": "mediatype",
+          "type": "mediatype"
+        }
+      ]
+    },
+    {
+      "intent": "ChannelIntent",
+      "slots": [
+        {
+          "name": "channel",
+          "type": "channel"
+        } 
+      ]
+    },    
+    {
+      "intent": "ClosedCapIntent",
+      "slots": [
+        {
+          "name": "cc",
+          "type": "cc"
+        } 
+      ]
+    },    
+    {
+      "intent": "HelpIntent",
+      "slots": []
+    },
+    {
+      "intent": "TVPowerIntent",
+      "slots": [
+        {
+          "name": "power",
+          "type": "power"
+        }
+      ]
+    },
+    {
+      "intent": "EverythingPowerIntent",
+      "slots": [
+        {
+          "name": "power",
+          "type": "power"
+        }
+      ]
+    },
+    {
+      "intent": "TVPowerStatusIntent",
+      "slots": []
+    }
+  ]
+ }

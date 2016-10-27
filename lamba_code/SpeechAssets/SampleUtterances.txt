@@ -1,0 +1,44 @@
+HelpIntent help me
+HelpIntent help
+
+recentlyAddedIntent to list the newest {mediatype}
+recentlyAddedIntent to list the latest {mediatype}
+recentlyAddedIntent to list the recently added {mediatype}
+recentlyAddedIntent to tell me the newest {mediatype}
+recentlyAddedIntent to tell me the latest {mediatype}
+recentlyAddedIntent to tell me the recently added {mediatype}
+
+
+newEpisodeIntent play the newest episode of {titlename}
+newEpisodeIntent play the latest episode of {titlename}
+
+searchMovieIntent play the movie {titlename}
+searchMovieIntent find the movie {titlename}
+searchMovieIntent look for a movie called {titlename}
+searchMovieIntent look for a movie named {titlename}
+
+VideoInputIntent change to HDMI {inputnumber}
+VideoInputIntent change the input to HDMI {inputnumber}
+VideoInputIntent change the input to {inputnumber}
+VideoInputIntent change to input {inputnumber}
+
+ClosedCapIntent turn {cc} closed caption
+ClosedCapIntent turn closed caption {cc}
+ClosedCapIntent turn {cc} closed captioning
+ClosedCapIntent turn closed captioning {cc}
+
+ChannelIntent change the channel to {channel}
+ChannelIntent change channel to {channel}
+
+TVPowerIntent turn {power} the TV
+TVPowerIntent turn {power} the TV
+TVPowerIntent turn the TV {power}
+TVPowerIntent turn the TV {power}
+TVPowerIntent turn {power}
+TVPowerIntent turn {power}
+
+TVPowerStatusIntent power status
+
+EverythingPowerIntent turn {power} everything
+EverythingPowerIntent turn everything {power}
+EverythingPowerIntent turn {power}
