@@ -1,6 +1,6 @@
 var telnet = require('telnet-client');
 var channels = require('./tivo/channel-list'); //loads the channels file in the same directory.
-var sonybravia = require('./sonybravia');
+var sonybravia = require('./js/sonybravia');
 var request = require('request');
 var express = require('express');
 var router = express.Router();

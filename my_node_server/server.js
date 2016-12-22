@@ -17,6 +17,6 @@ app.get('/', function(req, res) {
   res.send('API Homepage works');
 });
 
-app.listen(80);
-console.log('Local server running on port 80');
+app.listen(2222);
+console.log('Local server running on port 2222');
 
