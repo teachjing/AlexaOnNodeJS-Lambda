@@ -10,7 +10,7 @@ var IRcodeRequest = function(ircode, ResponseCallback) {
         //qs: {from: 'blog example', time: +new Date()}, //Query string data
         method: 'POST', 
         headers: {
-        'X-Auth-PSK': 'xbrsony123',
+        'X-Auth-PSK': config.sony.pin,
         'Content-Type': 'text/xml; charset=utf-8',
         'soapaction': '"urn:schemas-sony-com:service:IRCC:1#X_SendIRCC"'
         },

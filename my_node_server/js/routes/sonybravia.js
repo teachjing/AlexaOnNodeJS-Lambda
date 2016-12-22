@@ -117,7 +117,6 @@ exports.CallSonyAPI = function (message, ResponseCallback) {
       },
     body : message.jsonmsg,
   };
-
   ResponseCallback("allo", null);
 };
 
