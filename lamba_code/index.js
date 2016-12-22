@@ -1,4 +1,4 @@
-var AlexaSkill = require('js/AlexaSkill');
+var AlexaSkill = require('js/AlexaSkill');
 var express = require('express');
 var request = require('request');
 var http = require('http');
