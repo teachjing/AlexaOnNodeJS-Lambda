@@ -1,5 +1,5 @@
 var config = {
-    host: "<IP of your node box",
+    host: "test data here",
     port: "port",
     plexip: "plex server IP",
     plexusername: "<plex username>",
