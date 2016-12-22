@@ -47,5 +47,5 @@ Temporary Items
 .apdisk
 
 # Sensitive Data
-config.js
+my_node_server/js/config.js
 *config*
