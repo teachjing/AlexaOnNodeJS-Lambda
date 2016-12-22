@@ -83,7 +83,7 @@ Tivo.prototype.intentHandlers = {
 
         sendCommand("/sonybravia/power",header,null,function ResponseCallback(res) {
             console.log(res);
-            response.tell("Initial TV Power " + powerintent + " sent from Lambda to home server.");
+            response.tell("TV Power " + powerintent + "sent.");
         });           
     },
 
