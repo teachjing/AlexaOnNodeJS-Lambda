@@ -78,6 +78,7 @@ router.post('/searchmovie', function(req, res) {
 //Search and list the most recently added movies/shows based on what was said. 
 router.post('/recentlyadded', function(req, res) {
 		var mediatype = req;
+        console.log("type " + mediatype);
 
 
 		plex.query('/library/recentlyAdded').then(function(result) {
