@@ -115,7 +115,8 @@ router.post('/recentlyadded', function(req, res) {
     return false;
 });
 
-function getMovieList(callback) {
+function getMovieList(moviename, callback) {
+    console.log("Getting list of movies..looking for " + moviename);
 	plex.query('/library/sections/1/all').then(function (movielist) {
 		callback(movielist.MediaContainer);
 	});
