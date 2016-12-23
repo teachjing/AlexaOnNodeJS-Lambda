@@ -9,7 +9,7 @@ var APP_ID = config.appid;
 
 var Tivo = function () {
     AlexaSkill.call(this, APP_ID);
-}
+};
 
 // Extend AlexaSkill
 Tivo.prototype = Object.create(AlexaSkill.prototype);
@@ -19,20 +19,20 @@ Tivo.prototype.eventHandlers.onSessionStarted = function (sessionStartedRequest,
     console.log("Tivo onSessionStarted requestId: " + sessionStartedRequest.requestId
         + ", sessionId: " + session.sessionId);
     // any initialization logic goes here
-}
+};
 
 Tivo.prototype.eventHandlers.onLaunch = function (launchRequest, session, response) {
     console.log("Tivo onLaunch requestId: " + launchRequest.requestId + ", sessionId: " + session.sessionId);
     var speechOutput = "Welcome to the TV Controls, I can control the TV for you.";
     var repromptText = "You can say change channel to with the name of the channel.";
     response.ask(speechOutput, repromptText);
-}
+};
 
 Tivo.prototype.eventHandlers.onSessionEnded = function (sessionEndedRequest, session) {
     console.log("Tivo onSessionEnded requestId: " + sessionEndedRequest.requestId
         + ", sessionId: " + session.sessionId);
     // any cleanup logic goes here
-}
+};
 
 Tivo.prototype.intentHandlers = {
     // register custom intent handlers
@@ -153,9 +153,9 @@ Tivo.prototype.intentHandlers = {
             console.log(res);
             response.tell(res);
         }); 
-    },
+    }
 
-}
+};
 
 function sendCommand(path,header,body,callback) {
     var opt = {
@@ -183,5 +183,5 @@ exports.handler = function (event, context) {
     // Create an instance of the Tivo skill.
     var tivo = new Tivo();
     tivo.execute(event, context);
-}
+};
 

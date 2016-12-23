@@ -50,3 +50,5 @@ Temporary Items
 my_node_server/js/config.js
 my_node_server/node_modules/*
 
+.idea/
+my_node_server/node_modules/
