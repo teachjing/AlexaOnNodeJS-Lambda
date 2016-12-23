@@ -77,40 +77,42 @@ router.post('/searchmovie', function(req, res) {
 
 //Search and list the most recently added movies/shows based on what was said. 
 router.post('/recentlyadded', function(req, res) {
-	var mediatype = req.headers.mediatype; 
-    plex.query('/library/recentlyAdded').then(function(result) {
-        var items = [];
-        var current = 0; var maxcount = 5; //max count. change to make it list more shows.
-        console.log(result._children.length + " items found.");
+		var mediatype = req;
+		var type = '/';
 
-        //checks to see if movies or shows are requested and will extract all media of that type and push it to items
-        for(i = 0; i < result._children.length && current<maxcount; i++) {
+		plex.query('/library/recentlyAdded').then(function(result) {
+		    var items = [];
+		    var results = result.MediaContainer;
+		    var current = 0; var maxcount = 10; //max count. change to make it list more shows.
+		    console.log(results.size + " items found.");
 
-            if(mediatype == "movies" && result._children[i].type == "movie"){
-              items.push(" " + result._children[i].title);  
-              current++;
-            }
-            if(mediatype == "episodes" && result._children[i].type =="season") {
-              items.push(" " + result._children[i].parentTitle);
-              current++;
-            }
-        }
+		    //checks to see if movies or shows are requested and will extract all media of that type and push it to items
+		    for(var i = 0; i < results.size && current < maxcount; i++) {
+		        console.log(results.Metadata[i]);
+		        if(mediatype == "movies" && results.Metadata[i].type == "movie"){
+		          items.push(" " + results.Metadata[i].title);
+		          current++;
+		        }
+		        else if(mediatype == "episodes" && results.Metadata[i].type =="season") {
+		          var episode = results.Metadata[i];
+		          items.push("" + episode.parentTitle);
+		          current++;
+		        }
+		    }
 
-        if(items.length > 0) {
-          //generated response based on user input.
-          res.send("Here are " + items.length + " if your recently added " + mediatype + ". " + items);
-        } else {
-          res.send("You do not have any recently added " + mediatype);
-        }
-            
-        //var showsPhraseHyphenized = buildNaturalLangList(shows, 'and', true);
-        //var showsPhrase = buildNaturalLangList(shows, 'and');
+		    if(items.length > 0) {
+		      //generated response based on user input.
+		      res.send("Here are " + items.length + " of your recently added " + mediatype + ". " + items);
+		    } else {
+		      res.send("You do not have any recently added " + mediatype);
+		    }
 
-    }).catch(function(err) {
-        console.log("ERROR from Plex API on Query /library/onDeck");
-        console.log(err);
-        res.send("I'm sorry, Plex and I don't seem to be getting along right now");
-    });
+
+		}).catch(function(err) {
+		    console.log("ERROR from Plex API on Query /library/recentlAdded");
+		    console.log(err);
+		    //res.send("I'm sorry, Plex and I don't seem to be getting along right now");
+        });
 
     return false;
 });
