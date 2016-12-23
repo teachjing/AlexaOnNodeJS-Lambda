@@ -88,6 +88,7 @@ router.post('/recentlyadded', function(req, res) {
 
 		    //checks to see if movies or shows are requested and will extract all media of that type and push it to items
 		    for(var i = 0; i < results.size && current < maxcount; i++) {
+                console.log(results.Metadata[i].type);
 		        if(mediatype == "movies" && results.Metadata[i].type == "movie"){
                     console.log("movie added");
                     items.push(" " + results.Metadata[i].title);
