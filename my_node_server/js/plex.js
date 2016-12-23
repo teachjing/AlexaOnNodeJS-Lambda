@@ -78,7 +78,7 @@ router.post('/searchmovie', function(req, res) {
 //Search and list the most recently added movies/shows based on what was said. 
 router.post('/recentlyadded', function(req, res) {
 		var mediatype = req;
-		var type = '/';
+
 
 		plex.query('/library/recentlyAdded').then(function(result) {
 		    var items = [];
@@ -88,15 +88,16 @@ router.post('/recentlyadded', function(req, res) {
 
 		    //checks to see if movies or shows are requested and will extract all media of that type and push it to items
 		    for(var i = 0; i < results.size && current < maxcount; i++) {
-		        console.log(results.Metadata[i]);
 		        if(mediatype == "movies" && results.Metadata[i].type == "movie"){
-		          items.push(" " + results.Metadata[i].title);
-		          current++;
+                    console.log("movie added");
+                    items.push(" " + results.Metadata[i].title);
+                    current++;
 		        }
 		        else if(mediatype == "episodes" && results.Metadata[i].type =="season") {
-		          var episode = results.Metadata[i];
-		          items.push("" + episode.parentTitle);
-		          current++;
+                    console.log("show added");
+                    var episode = results.Metadata[i];
+                    items.push("" + episode.parentTitle);
+                    current++;
 		        }
 		    }
 
