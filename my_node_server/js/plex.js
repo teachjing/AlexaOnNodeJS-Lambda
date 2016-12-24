@@ -27,7 +27,6 @@ router.post('/playlatestepisode', function(req, res) {
 
     //Grabs full list of all shows to match against.
     plex.query('/library/sections/2/all').then(function(listOfTVShows) {
-        console.log(listOfTVShows.MediaContainer.Metadata);
 
         //runs script to find the closest matching show name to what was spoken.
         var bestShowMatch = getShowFromSpokenName(spokenShowName, listOfTVShows.MediaContainer);
@@ -38,11 +37,10 @@ router.post('/playlatestepisode', function(req, res) {
         return getAllEpisodesOfShow(show).then(function (allEpisodes) {
             console.log(allEpisodes.MediaContainer.size + " episodes.");
             var episode = allEpisodes.MediaContainer.Metadata[allEpisodes.MediaContainer.size - 1];
-            console.log(episode);
 
             //ratingKey is passed to playMedia function which sends request to play to player.
             playMedia(episode.ratingKey);
-            //res.send("Now loading " + episode.grandparentTitle + " titled " + episode.title);
+            res.send("Now loading " + episode.grandparentTitle + " titled " + episode.title);
         });
     });
 
