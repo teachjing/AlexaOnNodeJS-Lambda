@@ -21,29 +21,28 @@ router.post('/playlatestepisode', function(req, res) {
 	var spokenShowName = req.headers.showname; //receives the name spoken by the user
 
 	if (spokenShowName == undefined) {  
-		res.send("I had a problem finding that show.");
-	}
-	console.log("List of shows router initated. And show requested is" + spokenShowName);
+        res.send("I had a problem finding that show.");
+    }
+    console.log("List of shows router initiated. And show requested is " + spokenShowName);
 
-	//Grabs full list of all shows to match against.
-	plex.query('/library/sections/2/all').then(function(listOfTVShows) {
+    //Grabs full list of all shows to match against.
+    plex.query('/library/sections/2/all').then(function(listOfTVShows) {
 
-		//runs script to find the closest matching show name to what was spoken.
-		var bestShowMatch = getShowFromSpokenName(spokenShowName, listOfTVShows._children);
-		var show = bestShowMatch.bestMatch;
-		matchConfidence = bestShowMatch.confidence;
+        //runs script to find the closest matching show name to what was spoken.
+        var bestShowMatch = getShowFromSpokenName(spokenShowName, listOfTVShows.MediaContainer);
+        var show = bestShowMatch.bestMatch;
+        matchConfidence = bestShowMatch.confidence;
 
-		//bestmatch is returned
-		return getAllEpisodesOfShow(show).then(function (allEpisodes) {
-			console.log(allEpisodes._children.length + " episodes.");
-			var episode = allEpisodes._children[allEpisodes._children.length-1];
-			console.log(episode);
+        //best match is returned
+        return getAllEpisodesOfShow(show).then(function (allEpisodes) {
+            console.log(allEpisodes.MediaContainer.size + " episodes.");
+            var episode = allEpisodes.MediaContainer.Metadata[allEpisodes.MediaContainer.size - 1];
 
-			//ratingKey is passed to playMedia function which sends request to play to player. 
-			playMedia(episode.ratingKey);
-			res.send("Now loading " + episode.grandparentTitle + " titled " + episode.title);
-		});
-	});
+            //ratingKey is passed to playMedia function which sends request to play to player.
+            playMedia(episode.ratingKey);
+            res.send("Now loading " + episode.grandparentTitle + " titled " + episode.title);
+        });
+    });
 
 });
 
@@ -61,10 +60,10 @@ router.post('/searchmovie', function(req, res) {
 
 	//pulls full movie list to search against
 	getMovieList(moviename, function ResponseCallback(movielist) {
-		console.log(movielist._children.length + " items.");
+		console.log(movielist.size + " items.");
 
 		//finds best matching movie based on spoken name by user. 
-		findBestMovie(moviename, movielist._children, function MatchCallback(bestMatch) {
+		findBestMovie(moviename, movielist, function MatchCallback(bestMatch) {
         	console.log(bestMatch.title);
 
         	//ratingKey is passed to playMedia function to play movie. 
@@ -77,80 +76,82 @@ router.post('/searchmovie', function(req, res) {
 
 //Search and list the most recently added movies/shows based on what was said. 
 router.post('/recentlyadded', function(req, res) {
-	var mediatype = req.headers.mediatype; 
-    plex.query('/library/recentlyAdded').then(function(result) {
-        var items = [];
-        var current = 0; var maxcount = 5; //max count. change to make it list more shows.
-        console.log(result._children.length + " items found.");
+		var mediatype = req.headers.mediatype;
 
-        //checks to see if movies or shows are requested and will extract all media of that type and push it to items
-        for(i = 0; i < result._children.length && current<maxcount; i++) {
 
-            if(mediatype == "movies" && result._children[i].type == "movie"){
-              items.push(" " + result._children[i].title);  
-              current++;
-            }
-            if(mediatype == "episodes" && result._children[i].type =="season") {
-              items.push(" " + result._children[i].parentTitle);
-              current++;
-            }
-        }
+		plex.query('/library/recentlyAdded').then(function(result) {
+		    var items = [];
+		    var results = result.MediaContainer;
+		    var current = 0; var maxcount = 10; //max count. change to make it list more shows.
+		    console.log(results.size + " items found.");
 
-        if(items.length > 0) {
-          //generated response based on user input.
-          res.send("Here are " + items.length + " if your recently added " + mediatype + ". " + items);
-        } else {
-          res.send("You do not have any recently added " + mediatype);
-        }
-            
-        //var showsPhraseHyphenized = buildNaturalLangList(shows, 'and', true);
-        //var showsPhrase = buildNaturalLangList(shows, 'and');
+		    //checks to see if movies or shows are requested and will extract all media of that type and push it to items
+		    for(var i = 0; i < results.size && current < maxcount; i++) {
+		        if(mediatype == "movies" && results.Metadata[i].type == "movie"){
+                    items.push(" " + results.Metadata[i].title);
+                    current++;
+		        }
+		        else if(mediatype == "episodes" && results.Metadata[i].type =="season") {
+                    var episode = results.Metadata[i];
+                    items.push("" + episode.parentTitle);
+                    current++;
+		        }
+		    }
 
-    }).catch(function(err) {
-        console.log("ERROR from Plex API on Query /library/onDeck");
-        console.log(err);
-        res.send("I'm sorry, Plex and I don't seem to be getting along right now");
-    });
+		    if(items.length > 0) {
+		      //generated response based on user input.
+		      res.send("Here are " + items.length + " of your recently added " + mediatype + ". " + items);
+		    } else {
+		      res.send("You do not have any recently added " + mediatype);
+		    }
+
+
+		}).catch(function(err) {
+		    console.log("ERROR from Plex API on Query /library/recentlAdded");
+		    console.log(err);
+		    res.send("I'm sorry, Plex and I don't seem to be getting along right now");
+        });
 
     return false;
 });
 
 function getMovieList(moviename, callback) {
-	plex.query('/library/sections/3/all').then(function (movielist) {
-		callback(movielist);
+    console.log("Getting list of movies..looking for " + moviename);
+	plex.query('/library/sections/1/all').then(function (movielist) {
+		callback(movielist.MediaContainer);
 	});
-};
+}
 
 function getShowFromSpokenName(spokenShowName, listOfShows) {
 	console.log("getShowFromSpokenName function called for " + spokenShowName);
     return findBestMatch(spokenShowName, listOfShows, function (show) {
         return show.title;
     });
-};
+}
 
 function getAllEpisodesOfShow(show) {
-	console.log(" getAllEpisodesOfShow function called for show - " + show);
+	console.log(" getAllEpisodesOfShow function called for show - " + show.title);
     return plex.query('/library/metadata/' + show.ratingKey + '/allLeaves');
-};
+}
 
 //function to find best matching show from name, list of shows.
 function findBestMatch(phrase, items, mapfunc) {
 	console.log("findBestMatch function called");
-	console.log("Searching for '" + phrase + "' in " + items.length + " total items");
+	console.log("Searching for '" + phrase + "' in " + items.size + " total items");
     var MINIMUM = 0.2;
 
     var bestmatch = {index: -1, score: -1};
-
+	var possibilities = items.Metadata;
     //scans every name from list of items.
-    for(i=0; i<items.length; i++) {
-        var item = items[i];
+    for(i=0; i<items.size; i++) {
+        var possible = possibilities[i];
         if (mapfunc) {
-            item = mapfunc(items[i]);
+            possible = mapfunc(possibilities[i]);
         }
 
-        var score = dice(phrase, item);
+        var score = dice(phrase, possible);
 
-        //console.log(score + ': ' + item);
+        //console.log(score + ': ' + possible);
 
         if(score >= MINIMUM && score > bestmatch.score) {
             bestmatch.index = i;
@@ -162,25 +163,26 @@ function findBestMatch(phrase, items, mapfunc) {
         return false;
     } else {
         return {
-            bestMatch: items[bestmatch.index],
+            bestMatch: items.Metadata[bestmatch.index],
             confidence: bestmatch.score
         };
     }
-};
+}
 
 //function to find best matching show from name, list of shows.
 function findBestMovie(phrase, items, callback) {
 	console.log("findBestMatch function called");
-	console.log("Searching for '" + phrase + "' in " + items.length + " total items");
+	console.log("Searching for '" + phrase + "' in " + items.size + " total items");
     var MINIMUM = 0.2;
 
     var bestmatch = {index: -1, score: -1};
+    var movies = items.Metadata;
 
     //scans every name from list of items.
-    for(i=0; i<items.length; i++) {
-        var item = items[i];
+    for(var i = 0; i < items.size; i++) {
+        var movie = movies[i];
 
-        var score = dice(phrase, item.title);
+        var score = dice(phrase, movie.title);
 
         //console.log(score + ': ' + item);
 
@@ -193,10 +195,10 @@ function findBestMovie(phrase, items, callback) {
     if(bestmatch.index === -1) {
         return false;
     } else {
-    	console.log("located "+ items[bestmatch.index].title);
-    	callback(items[bestmatch.index]);
+    	console.log("located "+ movies[bestmatch.index].title);
+    	callback(movies[bestmatch.index]);
     }
-};
+}
 
 function playMedia(ratingKey) {
 	var parameterstring = qs.stringify({

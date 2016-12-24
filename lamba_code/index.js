@@ -1,16 +1,11 @@
-
-/**
- * App ID for the skill
- */
-
 var AlexaSkill = require('js/AlexaSkill');
 var express = require('express');
 var request = require('request');
-var http = require('http')
+var http = require('http');
 var serverinfo = require("js/serverinfo");
 var config = require('./config');
 
-var APP_ID = config.appid; //replace with "amzn1.echo-sdk-ams.app.[your-unique-value-here]";
+var APP_ID = config.appid;
 
 var Tivo = function () {
     AlexaSkill.call(this, APP_ID);
@@ -83,11 +78,20 @@ Tivo.prototype.intentHandlers = {
     },
 
     TVPowerIntent: function (intent, session, response) {
+    		var powerintent = intent.slots.power.value;
         var header = {'power': intent.slots.power.value};//pulls variable from intent
 
         sendCommand("/sonybravia/power",header,null,function ResponseCallback(res) {
             console.log(res);
-            response.tell("Initial TV Power " + powerintent + " sent from Lambda to home server.");
+            response.tell("TV Power " + powerintent + "sent.");
+        });           
+    },
+
+    TVPowerStatusIntent: function (intent, session, response) {
+
+        sendCommand("/sonybravia/power", {'power': 'status'}, null,function ResponseCallback(res) {
+            console.log(res);
+            response.tell(res);
         });           
     },
 
@@ -149,7 +153,7 @@ Tivo.prototype.intentHandlers = {
             console.log(res);
             response.tell(res);
         }); 
-    },
+    }
 
 };
 
@@ -172,8 +176,7 @@ function sendCommand(path,header,body,callback) {
 
     if (body) req.write(body);
     req.end();
-};
-
+}
 
 // Create the handler that responds to the Alexa Request.
 exports.handler = function (event, context) {

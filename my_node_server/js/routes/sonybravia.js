@@ -1,7 +1,7 @@
 var bodyParser = require('body-parser');
 var express = require('express');
 var sonybravia = require('../js/sonybravia');
-
+var config = require('../config.js');
 var router = express.Router();
 router.use(bodyParser.json());
 
@@ -14,9 +14,13 @@ router.post('/power',function(req,res){
     switch (power) {
         case "on": powerintent = 'active'; break;
         case "off": powerintent = 'standby'; break;
+	case "status": powerintent = 'status'; break;
     }
-    console.log("User has requested that the TV turn " + powerintent);
-
+    if (powerintent != 'status') {
+	console.log("User has requested that the TV turn " + powerintent);
+    } else {
+        console.log("User requested tv status.");
+    }	
     //retrieves the Sony Bravia power status
     var powerstatus = "";
 
@@ -27,9 +31,17 @@ router.post('/power',function(req,res){
         } else {
 
             console.log(codeResponse + " status has been retreived from function.");
-        
+            
+	    if (powerintent == 'status'){
+	    	var stat = "";
+		switch (codeResponse) {
+		    case 'active': stat = "on"; break;
+		    case 'standby': stat = "off"; break;
+		}
+	    	res.send("The TV is " + stat);
+            }
             //if powerintent already matches the power status. does nothing. otherwise turns power on/off
-            if (powerintent == codeResponse) {
+            else if (powerintent == codeResponse) {
                 res.send("The TV is already " + power);
             } else {
                 console.log("TV has been turned " + power)
@@ -100,12 +112,11 @@ exports.CallSonyAPI = function (message, ResponseCallback) {
     path: message.url,
     method: 'POST',
     headers: {
-        'X-Auth-PSK': 'xbrsony123',
+        'X-Auth-PSK': config.sony.pin,
         'Content-Type': 'application/json'
       },
     body : message.jsonmsg,
   };
-
   ResponseCallback("allo", null);
 };
 
