@@ -21,29 +21,30 @@ router.post('/playlatestepisode', function(req, res) {
 	var spokenShowName = req.headers.showname; //receives the name spoken by the user
 
 	if (spokenShowName == undefined) {  
-		res.send("I had a problem finding that show.");
-	}
-	console.log("List of shows router initiated. And show requested is" + spokenShowName);
+        res.send("I had a problem finding that show.");
+    }
+    console.log("List of shows router initiated. And show requested is " + spokenShowName);
 
-	//Grabs full list of all shows to match against.
-	plex.query('/library/sections/2/all').then(function(listOfTVShows) {
+    //Grabs full list of all shows to match against.
+    plex.query('/library/sections/2/all').then(function(listOfTVShows) {
+        console.log(listOfTVShows.MediaContainer.Metadata);
 
-		//runs script to find the closest matching show name to what was spoken.
-		var bestShowMatch = getShowFromSpokenName(spokenShowName, listOfTVShows._children);
-		var show = bestShowMatch.bestMatch;
-		matchConfidence = bestShowMatch.confidence;
+        //runs script to find the closest matching show name to what was spoken.
+        var bestShowMatch = getShowFromSpokenName(spokenShowName, listOfTVShows.MediaContainer);
+        var show = bestShowMatch.bestMatch;
+        matchConfidence = bestShowMatch.confidence;
 
-		//best match is returned
-		return getAllEpisodesOfShow(show).then(function (allEpisodes) {
-			console.log(allEpisodes.length + " episodes.");
-			var episode = allEpisodes._children[allEpisodes._children.length-1];
-			console.log(episode);
+        //best match is returned
+        return getAllEpisodesOfShow(show).then(function (allEpisodes) {
+            console.log(allEpisodes.MediaContainer.size + " episodes.");
+            var episode = allEpisodes.MediaContainer.Metadata[allEpisodes.MediaContainer.size - 1];
+            console.log(episode);
 
-			//ratingKey is passed to playMedia function which sends request to play to player. 
-			playMedia(episode.ratingKey);
-			res.send("Now loading " + episode.grandparentTitle + " titled " + episode.title);
-		});
-	});
+            //ratingKey is passed to playMedia function which sends request to play to player.
+            playMedia(episode.ratingKey);
+            //res.send("Now loading " + episode.grandparentTitle + " titled " + episode.title);
+        });
+    });
 
 });
 
@@ -131,28 +132,28 @@ function getShowFromSpokenName(spokenShowName, listOfShows) {
 }
 
 function getAllEpisodesOfShow(show) {
-	console.log(" getAllEpisodesOfShow function called for show - " + show);
+	console.log(" getAllEpisodesOfShow function called for show - " + show.title);
     return plex.query('/library/metadata/' + show.ratingKey + '/allLeaves');
 }
 
 //function to find best matching show from name, list of shows.
 function findBestMatch(phrase, items, mapfunc) {
 	console.log("findBestMatch function called");
-	console.log("Searching for '" + phrase + "' in " + items.length + " total items");
+	console.log("Searching for '" + phrase + "' in " + items.size + " total items");
     var MINIMUM = 0.2;
 
     var bestmatch = {index: -1, score: -1};
-
+	var possibilities = items.Metadata;
     //scans every name from list of items.
-    for(i=0; i<items.length; i++) {
-        var item = items[i];
+    for(i=0; i<items.size; i++) {
+        var possible = possibilities[i];
         if (mapfunc) {
-            item = mapfunc(items[i]);
+            possible = mapfunc(possibilities[i]);
         }
 
-        var score = dice(phrase, item);
+        var score = dice(phrase, possible);
 
-        //console.log(score + ': ' + item);
+        console.log(score + ': ' + possible);
 
         if(score >= MINIMUM && score > bestmatch.score) {
             bestmatch.index = i;
@@ -164,7 +165,7 @@ function findBestMatch(phrase, items, mapfunc) {
         return false;
     } else {
         return {
-            bestMatch: items[bestmatch.index],
+            bestMatch: items.Metadata[bestmatch.index],
             confidence: bestmatch.score
         };
     }
