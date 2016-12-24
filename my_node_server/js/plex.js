@@ -151,7 +151,7 @@ function findBestMatch(phrase, items, mapfunc) {
 
         var score = dice(phrase, possible);
 
-        console.log(score + ': ' + possible);
+        //console.log(score + ': ' + possible);
 
         if(score >= MINIMUM && score > bestmatch.score) {
             bestmatch.index = i;
